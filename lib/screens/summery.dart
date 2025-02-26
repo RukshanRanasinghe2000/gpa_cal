@@ -26,7 +26,7 @@ class Summery extends StatelessWidget {
                 padding: EdgeInsets.only(
                   left: screenWidth * 0.10,
                   right: screenWidth * 0.10,
-                  top: screenHeight * 0.13,
+                  top: screenHeight * 0.07,
                   bottom: 0,
                 ),
                 child: Align(
