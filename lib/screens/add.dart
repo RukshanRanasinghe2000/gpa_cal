@@ -50,28 +50,12 @@ class AddInfo extends StatelessWidget {
                   child: TextFormField(
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
-                      labelText: 'Grade',
-                    ),
-                    style: TextStyle(
-                      color: textPrimaryColor,
-                      fontSize: screenWidth * 0.05,
-                    ),
-                  )),
-              Padding(
-                  padding: EdgeInsets.only(
-                    left: screenWidth * 0.10,
-                    right: screenWidth * 0.10,
-                    top: screenHeight * 0.03,
-                    bottom: 0,
-                  ),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
                       labelText: 'Semester',
+                      labelStyle: TextStyle(color: textParagraph)
                     ),
-                    style: TextStyle(
-                      color: textPrimaryColor,
-                      fontSize: screenWidth * 0.05,
+                    style: const TextStyle(
+                      color: textParagraph,
+                      fontFamily: primaryFont,
                     ),
                   )),
               Padding(
@@ -84,11 +68,30 @@ class AddInfo extends StatelessWidget {
                   child: TextFormField(
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
-                      labelText: 'Subject code',
+                      labelText: 'Module code',
+                      labelStyle: TextStyle(color: textParagraph)
                     ),
-                    style: TextStyle(
-                      color: textPrimaryColor,
-                      fontSize: screenWidth * 0.05,
+                    style: const TextStyle(
+                      color: textParagraph,
+                      fontFamily: primaryFont,
+                    ),
+                  )),
+              Padding(
+                  padding: EdgeInsets.only(
+                    left: screenWidth * 0.10,
+                    right: screenWidth * 0.10,
+                    top: screenHeight * 0.03,
+                    bottom: 0,
+                  ),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Name',
+                      labelStyle: TextStyle(color: textParagraph)
+                    ),
+                    style: const TextStyle(
+                      color: textParagraph,
+                      fontFamily: primaryFont,
                     ),
                   )),
               Padding(
@@ -102,10 +105,11 @@ class AddInfo extends StatelessWidget {
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
                       labelText: 'Grade',
+                      labelStyle: TextStyle(color: textParagraph)
                     ),
-                    style: TextStyle(
-                      color: textPrimaryColor,
-                      fontSize: screenWidth * 0.05,
+                    style: const TextStyle(
+                      color: textParagraph,
+                      fontFamily: primaryFont,
                     ),
                   )),
               Padding(
@@ -130,10 +134,7 @@ class AddInfo extends StatelessWidget {
                             fontSize: screenWidth * 0.05,
                           ),
                         ),
-                      )
-                      
-                      )
-                      )
+                      )))
             ],
           ),
         )));
