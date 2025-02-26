@@ -92,7 +92,7 @@ class TableWidget extends StatelessWidget {
             height: cellHeight,
             alignment: Alignment.center,
             child: IconButton(
-              icon: const Icon(Icons.edit, color: textPrimaryColor),
+              icon: const Icon(Icons.edit, color: textSecondaryColor),
               onPressed: editButton,
               style: const ButtonStyle(
                 alignment: Alignment.centerLeft,
@@ -100,32 +100,6 @@ class TableWidget extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-
-  Widget _buildCell(String text, double fontSize, double cellHeight) {
-    return Container(
-      height: cellHeight,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Text(
-        text,
-        style: TextStyle(fontSize: fontSize, color: textParagraph),
-        textAlign: TextAlign.left,
-      ),
-    );
-  }
-
-  Widget _buildEditCell(VoidCallback? editButton, double cellHeight) {
-    return Container(
-      height: cellHeight,
-      alignment: Alignment.centerRight,
-      child: IconButton(
-        icon: const Icon(Icons.edit, color: Colors.blue),
-        onPressed: editButton,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 50),
-      ),
     );
   }
 
@@ -192,7 +166,12 @@ class TableWidget extends StatelessWidget {
               backgroundColor:
                   WidgetStateProperty.all<Color>(textSecondaryColor),
             ),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                color: textTableHeader,
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -200,7 +179,12 @@ class TableWidget extends StatelessWidget {
               backgroundColor:
                   WidgetStateProperty.all<Color>(textSecondaryColor),
             ),
-            child: const Text('Save'),
+            child: const Text(
+              'Save',
+              style: TextStyle(
+                color: textTableHeader,
+              ),
+            ),
           ),
         ],
       ),
