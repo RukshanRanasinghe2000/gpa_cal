@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gpa_cal/components/settings_table.dart';
+import 'package:gpa_cal/app/components/settings_table.dart';
 import 'package:gpa_cal/constant.dart';
 
 class Settings extends StatelessWidget {

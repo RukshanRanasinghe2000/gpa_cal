@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
-import 'package:gpa_cal/screens/add.dart';
-import 'package:gpa_cal/screens/settings.dart';
-import 'package:gpa_cal/screens/summery.dart';
+import 'package:gpa_cal/app/screens/add.dart';
+import 'package:gpa_cal/app/screens/settings.dart';
+import 'package:gpa_cal/app/screens/summery.dart';
 
 /// A stateful widget that represents the bottom navigation bar
 /// for the GPA app.

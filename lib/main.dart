@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gpa_cal/components/navigation_bar.dart';
+import 'package:gpa_cal/app/components/navigation_bar.dart';
 import 'package:gpa_cal/constant.dart';
 
 void main() {

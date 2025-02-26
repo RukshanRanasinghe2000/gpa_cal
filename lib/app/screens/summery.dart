@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gpa_cal/components/table.dart';
+import 'package:gpa_cal/app/components/table.dart';
 import 'package:gpa_cal/constant.dart';
 
 class Summery extends StatelessWidget {
