@@ -62,15 +62,16 @@ class Summery extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: screenWidth * 0.01,
-                  right: screenWidth * 0.01,
-                  top: 0,
-                  bottom: 0,
-                ),
-                child: const TableWidget(),
-              )
+              Expanded(
+                  child: Padding(
+                      padding: EdgeInsets.only(
+                        left: screenWidth * 0.01,
+                        right: screenWidth * 0.01,
+                        top: screenHeight * 0.02,
+                      ),
+                      child: const SingleChildScrollView(
+                        child: TableWidget(),
+                      ))),
             ],
           ),
         ),
