@@ -1,8 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
 
-class TableWidget extends StatelessWidget {
+import '../data/controllers/controllers.dart';
+
+class TableWidget extends StatefulWidget {
   const TableWidget({super.key});
+
+  @override
+  _TableWidgetState createState() => _TableWidgetState();
+}
+
+class _TableWidgetState extends State<TableWidget> {
+  List<List<String>> rows = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadAll();
+  }
+  /// Loads all subjects from the database and populates the `rows` list for the table display.
+  ///
+  /// The method retrieves a list of subjects from the `SubjectController` using the `getAllSubjects`
+  /// method, then processes each subject to extract the required fields: semester, subject code,
+  /// subject name, and grade. Each of these fields is cast to a string, ensuring that the values
+  /// are properly formatted for the table rows. If any field is missing or null, it is replaced
+  /// with an empty string. The `rows` list is updated within the `setState` method to trigger a
+  /// UI rebuild, reflecting the loaded data.
+  void loadAll() async {
+    SubjectController subjectController = SubjectController();
+    List<Map<String, dynamic>> subjects = await subjectController.getAllSubjects();
+    print(subjects);
+
+    setState(() {
+      rows = subjects.map((subject) {
+        return [
+          (subject['sem'] ?? '').toString(),
+          (subject['subject_code'] ?? '').toString(),
+          (subject['subject_name'] ?? '').toString(),
+          (subject['grade'] ?? '').toString(),
+        ];
+      }).toList();
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -13,12 +53,6 @@ class TableWidget extends StatelessWidget {
     // Define responsive sizes based on screen dimensions
     double cellHeight = screenHeight * 0.07;
     double fontSize = screenWidth * 0.03;
-
-    List<List<String>> rows = [
-      ["6", "CCSXXXX", "Cloud Application Development", "C"],
-      ["6", "CCSXXXX", "Cloud Application Development", "C"],
-      ["6", "CCSXXXX", "Cloud Application Development", "C"],
-    ];
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
