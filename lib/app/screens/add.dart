@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
 
+import '../data/controllers/controllers.dart';
+
 class AddInfo extends StatelessWidget {
   const AddInfo({super.key});
 
@@ -8,6 +10,21 @@ class AddInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
+    final TextEditingController _semesterController = TextEditingController();
+    final TextEditingController _moduleCodeController = TextEditingController();
+    final TextEditingController _nameController = TextEditingController();
+    final TextEditingController _gradeController = TextEditingController();
+
+    void save() {
+      String semester = _semesterController.text;
+      String moduleCode = _moduleCodeController.text;
+      String name = _nameController.text;
+      double grade = double.parse(_gradeController.text);
+
+      SubjectController().addSubject(moduleCode, name, semester, grade)
+
+    }
 
     return Scaffold(
         backgroundColor: darkBackground,
@@ -48,6 +65,7 @@ class AddInfo extends StatelessWidget {
                     bottom: 0,
                   ),
                   child: TextFormField(
+                    controller: _semesterController,
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
                       labelText: 'Semester',
@@ -66,6 +84,7 @@ class AddInfo extends StatelessWidget {
                     bottom: 0,
                   ),
                   child: TextFormField(
+                    controller: _moduleCodeController,
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
                       labelText: 'Module code',
@@ -84,6 +103,7 @@ class AddInfo extends StatelessWidget {
                     bottom: 0,
                   ),
                   child: TextFormField(
+                    controller: _nameController,
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
                       labelText: 'Name',
@@ -102,6 +122,7 @@ class AddInfo extends StatelessWidget {
                     bottom: 0,
                   ),
                   child: TextFormField(
+                    controller: _gradeController,
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
                       labelText: 'Grade',
@@ -122,7 +143,9 @@ class AddInfo extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          save();
+                        },
                         style: ButtonStyle(
                           backgroundColor:
                               WidgetStateProperty.all(textSecondaryColor),
@@ -140,3 +163,5 @@ class AddInfo extends StatelessWidget {
         )));
   }
 }
+
+
