@@ -69,7 +69,7 @@ class SubjectController {
   /// - [grade]: The updated grade.
   ///
   /// Returns the number of affected rows.
-  Future<int> updateSubject(int id, String subjectCode, String subjectName, String sem, double grade) async {
+  Future<int> updateSubject(int id, String subjectCode, String subjectName, String sem, String grade) async {
     late Database _db;
     final DatabaseConnection _databaseConnection = DatabaseConnection();
     _db = await _databaseConnection.initDatabase();

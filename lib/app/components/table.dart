@@ -38,6 +38,7 @@ class _TableWidgetState extends State<TableWidget> {
           (subject['subject_code'] ?? '').toString(),
           (subject['subject_name'] ?? '').toString(),
           (subject['grade'] ?? '').toString(),
+          (subject['id'] ?? '').toString(),
         ];
       }).toList();
     });
@@ -74,11 +75,19 @@ class _TableWidgetState extends State<TableWidget> {
           ),
           for (var row in rows)
             _buildTableRow(
-              row,
+              row.sublist(0, 4), // Exclude 'id' from display
               fontSize: fontSize,
               cellHeight: cellHeight,
-              editButton: () =>
-                  _editRow(context, row[0], row[1], row[2], row[3]),
+              editButton: () {
+                int gradeValue;
+                try {
+                  gradeValue = int.parse(row[4]);
+                  print( row);
+                } catch (e) {
+                  gradeValue = -1; // Handle non-numeric grades properly
+                }
+                _editRow(context, row[0], row[1], row[2], row[3], gradeValue);
+              },
             ),
         ],
       ),
@@ -138,7 +147,12 @@ class _TableWidgetState extends State<TableWidget> {
   }
 
   void _editRow(BuildContext context, String sem, String code, String module,
-      String grade) {
+      String grade, int id) {
+    TextEditingController semController = TextEditingController(text: sem);
+    TextEditingController codeController = TextEditingController(text: code);
+    TextEditingController moduleController = TextEditingController(text: module);
+    TextEditingController gradeController = TextEditingController(text: grade);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -152,44 +166,48 @@ class _TableWidgetState extends State<TableWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
+              controller: semController,
               style: const TextStyle(
                 color: textParagraph,
                 fontFamily: primaryFont,
               ),
-              initialValue: sem,
               decoration: const InputDecoration(
-                  labelText: 'Semester',
-                  labelStyle: TextStyle(color: textParagraph)),
+                labelText: 'Semester',
+                labelStyle: TextStyle(color: textParagraph),
+              ),
             ),
             TextFormField(
+              controller: codeController,
               style: const TextStyle(
                 color: textParagraph,
                 fontFamily: primaryFont,
               ),
-              initialValue: code,
               decoration: const InputDecoration(
-                  labelText: 'Code',
-                  labelStyle: TextStyle(color: textParagraph)),
+                labelText: 'Code',
+                labelStyle: TextStyle(color: textParagraph),
+              ),
             ),
             TextFormField(
+              controller: moduleController,
               style: const TextStyle(
                 color: textParagraph,
                 fontFamily: primaryFont,
               ),
-              initialValue: module,
               decoration: const InputDecoration(
-                  labelText: 'Module name',
-                  labelStyle: TextStyle(color: textParagraph)),
+                labelText: 'Module name',
+                labelStyle: TextStyle(color: textParagraph),
+              ),
             ),
             TextFormField(
+              controller: gradeController,
               style: const TextStyle(
                 color: textParagraph,
                 fontFamily: primaryFont,
               ),
-              initialValue: grade,
               decoration: const InputDecoration(
-                  labelText: 'Grade',
-                  labelStyle: TextStyle(color: textParagraph)),
+                labelText: 'Grade',
+                labelStyle: TextStyle(color: textParagraph),
+              ),
             ),
           ],
         ),
@@ -208,7 +226,17 @@ class _TableWidgetState extends State<TableWidget> {
             ),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed:() async {
+              String updatedSem = semController.text;
+              String updatedCode = codeController.text;
+              String updatedModule = moduleController.text;
+              String updatedGrade = gradeController.text;
+              SubjectController subjectController = SubjectController();
+              await subjectController.updateSubject(id, updatedSem, updatedCode, updatedModule, updatedGrade);
+              loadAll();
+              Navigator.of(context).pop();
+
+            },
             style: ButtonStyle(
               backgroundColor:
                   WidgetStateProperty.all<Color>(textSecondaryColor),
