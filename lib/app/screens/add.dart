@@ -20,7 +20,7 @@ class AddInfo extends StatelessWidget {
       String semester = _semesterController.text;
       String moduleCode = _moduleCodeController.text;
       String name = _nameController.text;
-      double grade = double.parse(_gradeController.text);
+      String grade = _gradeController.text;
 
       SubjectController().addSubject(moduleCode, name, semester, grade);
 

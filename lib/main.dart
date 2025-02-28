@@ -4,9 +4,7 @@ import 'package:gpa_cal/app/data/database.dart';
 import 'package:gpa_cal/constant.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-void main() {
-  var dbConnection = DatabaseConnection();
-  dbConnection.initDatabase();
+Future<void> main() async {
   runApp(const MyApp());
 }
 

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -18,17 +17,20 @@ class DatabaseConnection {
 
       final databasePath = await getDatabasesPath();
       final databaseName = 'gpa_app_db.db';
+      final dbPath = join(databasePath, databaseName);
 
-      var dbStatus = await databaseExists(join(databasePath, databaseName));
+      var dbStatus = await databaseExists(dbPath);
 
       if (!dbStatus) {
+        print('Database does not exist. Creating database...');
         return openDatabase(
-          join(databasePath, databaseName),
+          dbPath,
           version: 1,
           onCreate: _createDatabase,
         );
       } else {
-        throw Exception("Database does not exist");
+        print('Database already exists. Opening database...');
+        return openDatabase(dbPath);
       }
     } catch (e) {
       throw Exception("Error initializing database: $e");
@@ -36,14 +38,14 @@ class DatabaseConnection {
   }
 
   Future<void> _createDatabase(Database db, int version) async {
-    return await db.execute('''
-        CREATE TABLE subject (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          subject_code TEXT NOT NULL,
-          subject_name TEXT NOT NULL,
-          sem TEXT NOT NULL,
-          grade REAL NOT NULL
-        )
-      ''');
+    await db.execute('''
+      CREATE TABLE subject (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subject_code TEXT NOT NULL,
+        subject_name TEXT NOT NULL,
+        sem TEXT NOT NULL,
+        grade TEXT NOT NULL
+      )
+    ''');
   }
 }
