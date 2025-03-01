@@ -18,6 +18,33 @@ class SettingController {
     );
   }
 
+  /// Fetches the GPA value for a given grade.
+  ///
+  /// This function queries the database for a specific grade and returns its corresponding GPA value.
+  ///
+  /// Parameters:
+  /// - [grade]: The grade (e.g., "A+", "B") to look up.
+  ///
+  /// Returns:
+  /// - A `Future<double?>` representing the GPA value associated with the given grade.
+  ///   If the grade is not found, `null` is returned.
+  Future<double?> getGpaValueByGrade(String grade) async {
+
+    final DatabaseConnection _databaseConnection = DatabaseConnection();
+    final Database _db = await _databaseConnection.initDatabase();
+
+    // Query the database for the given grade
+    List<Map<String, dynamic>> result = await _db.query(
+      'settings',
+      columns: ['gpa_value'],
+      where: 'grade = ?',
+      whereArgs: [grade],
+    );
+
+    // Return GPA value if found, otherwise return null
+    return result.isNotEmpty ? result.first['gpa_value'] as double : null;
+  }
+
   // Update a setting
   Future<int> updateSetting(int id, String grade, double gpaValue) async {
     late Database _db;

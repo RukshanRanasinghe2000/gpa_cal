@@ -245,9 +245,9 @@ class _TableWidgetState extends State<TableWidget> {
               String updatedCode = codeController.text;
               String updatedModule = moduleController.text;
               String updatedGrade = gradeController.text;
-              String codedGrade = codeController.text;
+              String updatedCredit = creditController.text;
               SubjectController subjectController = SubjectController();
-              await subjectController.updateSubject(id, updatedSem, updatedCode, updatedModule,codedGrade, updatedGrade);
+              await subjectController.updateSubject(id, updatedCode, updatedModule, updatedSem, updatedGrade, updatedCredit);
               loadAll();
               Navigator.of(context).pop();
 

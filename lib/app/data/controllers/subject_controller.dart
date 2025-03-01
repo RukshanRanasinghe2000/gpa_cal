@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+import '../../services/calculate_gpa.dart';
 import '../database.dart';
 
 class SubjectController {
@@ -61,6 +62,30 @@ class SubjectController {
     return result.isNotEmpty ? result.first : null;
   }
 
+  /// Fetches all credit values from the 'subject' table in the database.
+  ///
+  /// This function retrieves only the 'credit' column values from all records
+  /// in the 'subject' table.
+  ///
+  /// Returns:
+  /// - A `Future<List<String>>` containing all credit values as a list of strings.
+  Future<List<String>> getAllCredits() async {
+    late Database _db;
+    final DatabaseConnection _databaseConnection = DatabaseConnection();
+
+    // Initialize the database connection
+    _db = await _databaseConnection.initDatabase();
+
+    // Query the database to fetch only the 'credit' column values
+    List<Map<String, dynamic>> result = await _db.query(
+      'subject',
+      columns: ['grade'], // Select only the 'credit' column
+    );
+
+    // Extract and return the 'credit' values as a List<String>
+    return result.map((row) => row['grade'] as String).toList();
+  }
+
   // Update a subject
   /// Updates the details of a subject in the database based on the provided [id].
   ///
@@ -102,10 +127,13 @@ class SubjectController {
     late Database _db;
     final DatabaseConnection _databaseConnection = DatabaseConnection();
     _db = await _databaseConnection.initDatabase();
+    GPAService gpaService = GPAService();  // Create an instance of GPAService
+    Future<String> gpa = gpaService.getFinalGPA(); // Call getFinalGPA() on the instance
     return await _db.delete(
       'subject',
       where: 'id = ?',
       whereArgs: [id],
     );
   }
+
 }
