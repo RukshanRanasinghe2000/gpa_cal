@@ -1,8 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
 
-class SettingsTable extends StatelessWidget {
+import '../data/controllers/controllers.dart';
+
+class SettingsTable extends StatefulWidget {
   const SettingsTable({super.key});
+
+  @override
+  _SettingsTableState createState() => _SettingsTableState();
+}
+
+class _SettingsTableState extends State<SettingsTable> {
+  // This will hold the rows dynamically fetched from the database
+  List<List<String>> rows = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadAll();
+  }
+
+  // This is a simulated method that mimics fetching data from a database
+  Future<void> loadAll() async {
+    SettingController settingController = SettingController();
+    List<Map<String, dynamic>> settings = await settingController.getAllSubjects();
+    // Simulating a delay (e.g., from an API or database)
+    await Future.delayed(const Duration(seconds: 2));
+
+    setState(() {
+      rows = settings.map((subject) {
+        return [
+          (subject['grade'] ?? '').toString(),
+          (subject['gpa_value'] ?? '').toString(),
+          (subject['id'] ?? '').toString(),
+        ];
+      }).toList();
+    });
+
+    print(rows);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,50 +48,36 @@ class SettingsTable extends StatelessWidget {
     double cellHeight = screenHeight * 0.07;
     double fontSize = screenWidth * 0.03;
 
-    // List of rows with grade and GPA value
-    List<List<String>> rows = [
-      ["A+", "4"],
-      ["A", "4"],
-      ["A-", "3.7"],
-      ["B+", "3.3"],
-      ["B", "3.0"],
-      ["B-", "2.7"],
-      ["C+", "2.3"],
-      ["C", "2.0"],
-      ["C-", "1.7"],
-      ["D+", "1.3"],
-      ["D", "1"],
-      ["E", "0.7"],
-      ["E", "0.0"],
-    ];
-
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Table(
-              columnWidths: const {
-                0: FlexColumnWidth(1),
-                1: FlexColumnWidth(1),
-                2: FlexColumnWidth(1.2),
-              },
-              border: const TableBorder.symmetric(),
-              children: [
-                // Header row
-                _buildTableRow(["Grade", "GPA value", "Actions"],
-                    isHeader: true, fontSize: fontSize, cellHeight: cellHeight),
+            if (rows.isEmpty)
+              const Center(child: CircularProgressIndicator())
+            else
+              Table(
+                columnWidths: const {
+                  0: FlexColumnWidth(1),
+                  1: FlexColumnWidth(1),
+                  2: FlexColumnWidth(1.2),
+                },
+                border: const TableBorder.symmetric(),
+                children: [
+                  // Header row
+                  _buildTableRow(["Grade", "GPA value", "Actions"],
+                      isHeader: true, fontSize: fontSize, cellHeight: cellHeight),
 
-                // Data rows with Edit buttons
-                for (var row in rows)
-                  _buildTableRow(
-                    [...row, ""], // Add empty for Edit button cell
-                    fontSize: fontSize,
-                    cellHeight: cellHeight,
-                    editButton: () => _editRow(context, row[0], row[1]),
-                  ),
-              ],
-            ),
+                  // Data rows with Edit buttons
+                  for (var row in rows)
+                    _buildTableRow(
+                      row.sublist(0, 3),
+                      fontSize: fontSize,
+                      cellHeight: cellHeight,
+                      editButton: () => _editRow(context, row[0], row[1]),
+                    ),
+                ],
+              ),
           ],
         ),
       ),
@@ -64,35 +86,35 @@ class SettingsTable extends StatelessWidget {
 
   TableRow _buildTableRow(List<String> data,
       {bool isHeader = false,
-      required double fontSize,
-      required double cellHeight,
-      VoidCallback? editButton}) {
+        required double fontSize,
+        required double cellHeight,
+        VoidCallback? editButton}) {
     return TableRow(
       decoration: isHeader
           ? const BoxDecoration(
-              color: textTertiaryColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.43),
-                topRight: Radius.circular(8.43),
-              ),
-            ) // Header background
+        color: textTertiaryColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(8.43),
+          topRight: Radius.circular(8.43),
+        ),
+      ) // Header background
           : const BoxDecoration(
-              color: Colors.transparent,
-              border: Border(
-                bottom: BorderSide(
-                  color: textParagraph,
-                  width: 1.0,
-                ),
-                left: BorderSide(
-                  color: textParagraph,
-                  width: 1.0,
-                ),
-                right: BorderSide(
-                  color: textParagraph,
-                  width: 1.0,
-                ),
-              ),
-            ),
+        color: Colors.transparent,
+        border: Border(
+          bottom: BorderSide(
+            color: textParagraph,
+            width: 1.0,
+          ),
+          left: BorderSide(
+            color: textParagraph,
+            width: 1.0,
+          ),
+          right: BorderSide(
+            color: textParagraph,
+            width: 1.0,
+          ),
+        ),
+      ),
       children: [
         for (int i = 0; i < data.length; i++)
           Container(
@@ -101,18 +123,18 @@ class SettingsTable extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: i == data.length - 1 && !isHeader
                 ? IconButton(
-                    icon: const Icon(Icons.edit, color: textSecondaryColor),
-                    onPressed: editButton,
-                  )
+              icon: const Icon(Icons.edit, color: textSecondaryColor),
+              onPressed: editButton,
+            )
                 : Text(
-                    data[i],
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
-                      color: isHeader ? textTableHeader : textParagraph,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
+              data[i],
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+                color: isHeader ? textTableHeader : textParagraph,
+              ),
+              textAlign: TextAlign.left,
+            ),
           ),
       ],
     );
@@ -124,7 +146,7 @@ class SettingsTable extends StatelessWidget {
       builder: (context) => AlertDialog(
         backgroundColor: darkBackground,
         title: const Text('Edit Grade',
-        style: TextStyle(
+            style: TextStyle(
               color: textSecondaryColor,
               fontFamily: primaryFont,
             )
@@ -139,9 +161,9 @@ class SettingsTable extends StatelessWidget {
               ),
               initialValue: grade,
               decoration: const InputDecoration(
-                labelText: 'Grade',
-                labelStyle: TextStyle(color: textParagraph)
-                ),
+                  labelText: 'Grade',
+                  labelStyle: TextStyle(color: textParagraph)
+              ),
             ),
             TextFormField(
               style: const TextStyle(
@@ -150,8 +172,8 @@ class SettingsTable extends StatelessWidget {
               ),
               initialValue: gpa,
               decoration: const InputDecoration(
-                labelText: 'GPA Value',
-                labelStyle: TextStyle(color: textParagraph)),
+                  labelText: 'GPA Value',
+                  labelStyle: TextStyle(color: textParagraph)),
               keyboardType: TextInputType.number,
             ),
           ],
@@ -161,7 +183,7 @@ class SettingsTable extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
             style: ButtonStyle(
               backgroundColor:
-                  WidgetStateProperty.all<Color>(textSecondaryColor),
+              WidgetStateProperty.all<Color>(textSecondaryColor),
             ),
             child: const Text('Cancel'),
           ),
@@ -169,7 +191,7 @@ class SettingsTable extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
             style: ButtonStyle(
               backgroundColor:
-                  WidgetStateProperty.all<Color>(textSecondaryColor),
+              WidgetStateProperty.all<Color>(textSecondaryColor),
             ),
             child: const Text('Save'),
           ),

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'controllers/controllers.dart';
 
 class DatabaseConnection {
 
@@ -45,6 +46,14 @@ class DatabaseConnection {
         subject_name TEXT NOT NULL,
         sem TEXT NOT NULL,
         grade TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE settings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        grade TEXT NOT NULL,
+        gpa_value REAL NOT NULL
       )
     ''');
   }
