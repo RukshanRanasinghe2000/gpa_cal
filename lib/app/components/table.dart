@@ -38,6 +38,7 @@ class _TableWidgetState extends State<TableWidget> {
           (subject['subject_code'] ?? '').toString(),
           (subject['subject_name'] ?? '').toString(),
           (subject['grade'] ?? '').toString(),
+          (subject['credit'] ?? '').toString(),
           (subject['id'] ?? '').toString(),
         ];
       }).toList();
@@ -56,37 +57,38 @@ class _TableWidgetState extends State<TableWidget> {
     double fontSize = screenWidth * 0.03;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
       child: Table(
         columnWidths: const {
-          0: FlexColumnWidth(1),
+          0: FlexColumnWidth(0.6),
           1: FlexColumnWidth(1),
           2: FlexColumnWidth(1.8),
-          3: FlexColumnWidth(1),
-          4: FlexColumnWidth(0.5), // For edit button
+          3: FlexColumnWidth(0.8),
+          4: FlexColumnWidth(0.8), // For edit button
+          5: FlexColumnWidth(0.5), // For edit button
         },
         border: const TableBorder.symmetric(),
         children: [
           _buildTableRow(
-            ["Sem", "Code", "Module Name", "Grade", ""],
+            ["Sem", "Code", "Name", "Credit", "Grade", ""],
             isHeader: true,
             fontSize: fontSize,
             cellHeight: cellHeight,
           ),
           for (var row in rows)
             _buildTableRow(
-              row.sublist(0, 4), // Exclude 'id' from display
+              row.sublist(0, 5), // Exclude 'id' from display
               fontSize: fontSize,
               cellHeight: cellHeight,
               editButton: () {
                 int gradeValue;
                 try {
-                  gradeValue = int.parse(row[4]);
+                  gradeValue = int.parse(row[5]);
                   print( row);
                 } catch (e) {
                   gradeValue = -1; // Handle non-numeric grades properly
                 }
-                _editRow(context, row[0], row[1], row[2], row[3], gradeValue);
+                _editRow(context, row[0], row[1], row[2], row[3], row[4], gradeValue);
               },
             ),
         ],
@@ -147,11 +149,12 @@ class _TableWidgetState extends State<TableWidget> {
   }
 
   void _editRow(BuildContext context, String sem, String code, String module,
-      String grade, int id) {
+      String grade, String credit, int id) {
     TextEditingController semController = TextEditingController(text: sem);
     TextEditingController codeController = TextEditingController(text: code);
     TextEditingController moduleController = TextEditingController(text: module);
     TextEditingController gradeController = TextEditingController(text: grade);
+    TextEditingController creditController = TextEditingController(text: credit);
 
     showDialog(
       context: context,
@@ -199,6 +202,17 @@ class _TableWidgetState extends State<TableWidget> {
               ),
             ),
             TextFormField(
+              controller: creditController,
+              style: const TextStyle(
+                color: textParagraph,
+                fontFamily: primaryFont,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Credit',
+                labelStyle: TextStyle(color: textParagraph),
+              ),
+            ),
+            TextFormField(
               controller: gradeController,
               style: const TextStyle(
                 color: textParagraph,
@@ -231,8 +245,9 @@ class _TableWidgetState extends State<TableWidget> {
               String updatedCode = codeController.text;
               String updatedModule = moduleController.text;
               String updatedGrade = gradeController.text;
+              String codedGrade = codeController.text;
               SubjectController subjectController = SubjectController();
-              await subjectController.updateSubject(id, updatedSem, updatedCode, updatedModule, updatedGrade);
+              await subjectController.updateSubject(id, updatedSem, updatedCode, updatedModule,codedGrade, updatedGrade);
               loadAll();
               Navigator.of(context).pop();
 

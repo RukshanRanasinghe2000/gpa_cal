@@ -45,6 +45,7 @@ class DatabaseConnection {
         subject_code TEXT NOT NULL,
         subject_name TEXT NOT NULL,
         sem TEXT NOT NULL,
+        credit TEXT,
         grade TEXT NOT NULL
       )
     ''');

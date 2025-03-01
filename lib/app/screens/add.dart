@@ -15,14 +15,16 @@ class AddInfo extends StatelessWidget {
     final TextEditingController _moduleCodeController = TextEditingController();
     final TextEditingController _nameController = TextEditingController();
     final TextEditingController _gradeController = TextEditingController();
+    final TextEditingController _creditController = TextEditingController();
 
     void save() {
       String semester = _semesterController.text;
       String moduleCode = _moduleCodeController.text;
       String name = _nameController.text;
       String grade = _gradeController.text;
+      String credit = _creditController.text;
 
-      SubjectController().addSubject(moduleCode, name, semester, grade);
+      SubjectController().addSubject(moduleCode, name, semester, credit, grade);
 
     }
 
@@ -127,6 +129,25 @@ class AddInfo extends StatelessWidget {
                       border: UnderlineInputBorder(),
                       labelText: 'Grade',
                       labelStyle: TextStyle(color: textParagraph)
+                    ),
+                    style: const TextStyle(
+                      color: textParagraph,
+                      fontFamily: primaryFont,
+                    ),
+                  )),
+              Padding(
+                  padding: EdgeInsets.only(
+                    left: screenWidth * 0.10,
+                    right: screenWidth * 0.10,
+                    top: screenHeight * 0.03,
+                    bottom: 0,
+                  ),
+                  child: TextFormField(
+                    controller: _creditController,
+                    decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Credit',
+                        labelStyle: TextStyle(color: textParagraph)
                     ),
                     style: const TextStyle(
                       color: textParagraph,
