@@ -43,9 +43,6 @@ class _TableWidgetState extends State<TableWidget> {
           (subject['id'] ?? '').toString(),
         ];
       }).toList();
-      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&7");
-      print(rows);
-      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&7");
     });
   }
 
@@ -92,9 +89,6 @@ class _TableWidgetState extends State<TableWidget> {
                 } catch (e) {
                   gradeValue = -1; // Handle non-numeric grades properly
                 }
-                print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-                print(row);
-                print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
                 _editRow(context, row[0], row[1], row[2],row[4], row[3], gradeValue);
               },
             ),
