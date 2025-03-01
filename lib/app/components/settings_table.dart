@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
 
-import '../data/controllers/controllers.dart';
+import '../data/controllers/settings_controller.dart';
+import '../data/controllers/subject_controller.dart';
 
 class SettingsTable extends StatefulWidget {
   const SettingsTable({super.key});

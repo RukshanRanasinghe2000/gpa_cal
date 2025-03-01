@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
 
-import '../data/controllers/controllers.dart';
+import '../data/controllers/subject_controller.dart';
 
 class AddInfo extends StatelessWidget {
   const AddInfo({super.key});
