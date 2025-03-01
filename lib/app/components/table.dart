@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
 
 import '../data/controllers/subject_controller.dart';
+import '../services/calculate_gpa.dart';
 
 class TableWidget extends StatefulWidget {
   const TableWidget({super.key});
@@ -42,6 +43,9 @@ class _TableWidgetState extends State<TableWidget> {
           (subject['id'] ?? '').toString(),
         ];
       }).toList();
+      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&7");
+      print(rows);
+      print("&&&&&&&&&&&&&&&&&&&&&&&&&&&7");
     });
   }
 
@@ -88,7 +92,10 @@ class _TableWidgetState extends State<TableWidget> {
                 } catch (e) {
                   gradeValue = -1; // Handle non-numeric grades properly
                 }
-                _editRow(context, row[0], row[1], row[2], row[3], row[4], gradeValue);
+                print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                print(row);
+                print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                _editRow(context, row[0], row[1], row[2],row[4], row[3], gradeValue);
               },
             ),
         ],
@@ -148,8 +155,7 @@ class _TableWidgetState extends State<TableWidget> {
     );
   }
 
-  void _editRow(BuildContext context, String sem, String code, String module,
-      String grade, String credit, int id) {
+  void _editRow(BuildContext context, String sem, String code, String module, String credit, String grade, int id) {
     TextEditingController semController = TextEditingController(text: sem);
     TextEditingController codeController = TextEditingController(text: code);
     TextEditingController moduleController = TextEditingController(text: module);
@@ -240,21 +246,40 @@ class _TableWidgetState extends State<TableWidget> {
             ),
           ),
           ElevatedButton(
-            onPressed:() async {
+            onPressed: () async {
               String updatedSem = semController.text;
               String updatedCode = codeController.text;
               String updatedModule = moduleController.text;
               String updatedGrade = gradeController.text;
               String updatedCredit = creditController.text;
+
+              // Check if any value has changed
+              if (updatedSem == sem &&
+                  updatedCode == code &&
+                  updatedModule == module &&
+                  updatedGrade == grade &&
+                  updatedCredit == credit) {
+                // Show a SnackBar message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: textSecondaryColor,
+                    content: Text(
+                        "Nothing to update",
+                    ),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+                return; // Exit without updating
+              }
+
               SubjectController subjectController = SubjectController();
               await subjectController.updateSubject(id, updatedCode, updatedModule, updatedSem, updatedGrade, updatedCredit);
+
               loadAll();
               Navigator.of(context).pop();
-
             },
             style: ButtonStyle(
-              backgroundColor:
-                  WidgetStateProperty.all<Color>(textSecondaryColor),
+              backgroundColor: WidgetStateProperty.all<Color>(textSecondaryColor),
             ),
             child: const Text(
               'Save',

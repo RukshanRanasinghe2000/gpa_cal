@@ -40,7 +40,9 @@ class SettingController {
       where: 'grade = ?',
       whereArgs: [grade],
     );
-
+    print("1111111111111111111111111111111");
+    print(result);
+    print("1111111111111111111111111111111");
     // Return GPA value if found, otherwise return null
     return result.isNotEmpty ? result.first['gpa_value'] as double : null;
   }
@@ -79,6 +81,7 @@ class SettingController {
 
       // Re-fetch the settings after inserting default values
       settings = await _db.query('settings');
+
     }
     return settings;
   }

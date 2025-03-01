@@ -79,11 +79,11 @@ class SubjectController {
     // Query the database to fetch only the 'credit' column values
     List<Map<String, dynamic>> result = await _db.query(
       'subject',
-      columns: ['grade'], // Select only the 'credit' column
+      columns: ['credit'], // Select only the 'credit' column
     );
 
     // Extract and return the 'credit' values as a List<String>
-    return result.map((row) => row['grade'] as String).toList();
+    return result.map((row) => row['credit'] as String).toList();
   }
 
   // Update a subject
