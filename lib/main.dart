@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'GPA Calculator',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
