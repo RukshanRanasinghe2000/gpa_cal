@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
-
 import '../data/controllers/subject_controller.dart';
+import '../data/validators/form_validation.dart';
 import '../services/calculate_gpa.dart';
 
 class TableWidget extends StatefulWidget {
-  const TableWidget({super.key});
+  final Function(bool)? onTableUpdated;
+  const TableWidget({super.key, this.onTableUpdated});
 
   @override
   _TableWidgetState createState() => _TableWidgetState();
@@ -44,6 +45,8 @@ class _TableWidgetState extends State<TableWidget> {
         ];
       }).toList();
     });
+    // Notify parent that the table is updated
+    widget.onTableUpdated?.call(true);
   }
 
 
@@ -156,6 +159,8 @@ class _TableWidgetState extends State<TableWidget> {
     TextEditingController gradeController = TextEditingController(text: grade);
     TextEditingController creditController = TextEditingController(text: credit);
 
+    final _formKey = GlobalKey<FormState>();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -165,72 +170,64 @@ class _TableWidgetState extends State<TableWidget> {
               color: textSecondaryColor,
               fontFamily: primaryFont,
             )),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: semController,
-              style: const TextStyle(
-                color: textParagraph,
-                fontFamily: primaryFont,
+        content: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: semController,
+                style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
+                decoration: const InputDecoration(
+                  labelText: 'Semester',
+                  labelStyle: TextStyle(color: textParagraph),
+                ),
+                validator: (value) => FormValidator.validateRequired(value, "Semester"),
               ),
-              decoration: const InputDecoration(
-                labelText: 'Semester',
-                labelStyle: TextStyle(color: textParagraph),
+              TextFormField(
+                controller: codeController,
+                style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
+                decoration: const InputDecoration(
+                  labelText: 'Code',
+                  labelStyle: TextStyle(color: textParagraph),
+                ),
+                validator: (value) => FormValidator.validateRequired(value, "Code"),
               ),
-            ),
-            TextFormField(
-              controller: codeController,
-              style: const TextStyle(
-                color: textParagraph,
-                fontFamily: primaryFont,
+              TextFormField(
+                controller: moduleController,
+                style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
+                decoration: const InputDecoration(
+                  labelText: 'Module name',
+                  labelStyle: TextStyle(color: textParagraph),
+                ),
+                validator: (value) => FormValidator.validateRequired(value, "Module Name"),
               ),
-              decoration: const InputDecoration(
-                labelText: 'Code',
-                labelStyle: TextStyle(color: textParagraph),
+              TextFormField(
+                controller: creditController,
+                style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
+                decoration: const InputDecoration(
+                  labelText: 'Credit',
+                  labelStyle: TextStyle(color: textParagraph),
+                ),
+                validator: FormValidator.validateCredit,
               ),
-            ),
-            TextFormField(
-              controller: moduleController,
-              style: const TextStyle(
-                color: textParagraph,
-                fontFamily: primaryFont,
+              TextFormField(
+                controller: gradeController,
+                style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
+                decoration: const InputDecoration(
+                  labelText: 'Grade',
+                  labelStyle: TextStyle(color: textParagraph),
+                ),
+                validator: FormValidator.validateGrade,
               ),
-              decoration: const InputDecoration(
-                labelText: 'Module name',
-                labelStyle: TextStyle(color: textParagraph),
-              ),
-            ),
-            TextFormField(
-              controller: creditController,
-              style: const TextStyle(
-                color: textParagraph,
-                fontFamily: primaryFont,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Credit',
-                labelStyle: TextStyle(color: textParagraph),
-              ),
-            ),
-            TextFormField(
-              controller: gradeController,
-              style: const TextStyle(
-                color: textParagraph,
-                fontFamily: primaryFont,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Grade',
-                labelStyle: TextStyle(color: textParagraph),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: ButtonStyle(
-              backgroundColor:
-                  WidgetStateProperty.all<Color>(textSecondaryColor),
+              backgroundColor: WidgetStateProperty.all<Color>(textSecondaryColor),
             ),
             child: const Text(
               'Cancel',
@@ -241,36 +238,34 @@ class _TableWidgetState extends State<TableWidget> {
           ),
           ElevatedButton(
             onPressed: () async {
-              String updatedSem = semController.text;
-              String updatedCode = codeController.text;
-              String updatedModule = moduleController.text;
-              String updatedGrade = gradeController.text;
-              String updatedCredit = creditController.text;
+              if (_formKey.currentState!.validate()) {
+                String updatedSem = semController.text;
+                String updatedCode = codeController.text;
+                String updatedModule = moduleController.text;
+                String updatedGrade = gradeController.text;
+                String updatedCredit = creditController.text;
 
-              // Check if any value has changed
-              if (updatedSem == sem &&
-                  updatedCode == code &&
-                  updatedModule == module &&
-                  updatedGrade == grade &&
-                  updatedCredit == credit) {
-                // Show a SnackBar message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    backgroundColor: textSecondaryColor,
-                    content: Text(
-                        "Nothing to update",
+                // Check if any value has changed
+                if (updatedSem == sem &&
+                    updatedCode == code &&
+                    updatedModule == module &&
+                    updatedGrade == grade &&
+                    updatedCredit == credit) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: textSecondaryColor,
+                      content: Text("Nothing to update"),
+                      duration: Duration(seconds: 2),
                     ),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-                return; // Exit without updating
+                  );
+                  return;
+                }
+
+                SubjectController subjectController = SubjectController();
+                await subjectController.updateSubject(id, updatedCode, updatedModule, updatedSem, updatedGrade, updatedCredit);
+                loadAll();
+                Navigator.of(context).pop();
               }
-
-              SubjectController subjectController = SubjectController();
-              await subjectController.updateSubject(id, updatedCode, updatedModule, updatedSem, updatedGrade, updatedCredit);
-
-              loadAll();
-              Navigator.of(context).pop();
             },
             style: ButtonStyle(
               backgroundColor: WidgetStateProperty.all<Color>(textSecondaryColor),

@@ -3,16 +3,33 @@ import 'package:gpa_cal/app/components/table.dart';
 import 'package:gpa_cal/constant.dart';
 import '../services/calculate_gpa.dart';
 
-class Summery extends StatelessWidget {
+class Summery extends StatefulWidget {
   const Summery({super.key});
 
   @override
+  _SummeryState createState() => _SummeryState();
+}
+
+class _SummeryState extends State<Summery> {
+  late Future<String> _gpaFuture;
+  GPAService gpaService = GPAService();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchGPA();
+  }
+
+  void _fetchGPA() {
+    setState(() {
+      _gpaFuture = gpaService.getFinalGPA();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    /// Get screen width & height
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
-    GPAService gpaService = GPAService();
 
     return Scaffold(
       backgroundColor: darkBackground,
@@ -54,18 +71,18 @@ class Summery extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: FutureBuilder<String>(
-                    future: gpaService.getFinalGPA(), // This will now return Future<String>
+                    future: _gpaFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator(); // Show loading
+                        return const CircularProgressIndicator();
                       } else if (snapshot.hasError) {
                         return Text(
-                          "Error: ${snapshot.error.toString()}", // Show real error message
+                          "Error: ${snapshot.error.toString()}",
                           style: const TextStyle(color: Colors.red),
                         );
                       } else {
                         return Text(
-                          snapshot.data!.toString(), // Use the string directly
+                          snapshot.data!.toString(),
                           style: TextStyle(
                             fontFamily: primaryFont,
                             fontSize: screenWidth * 0.2,
@@ -86,8 +103,15 @@ class Summery extends StatelessWidget {
                     right: screenWidth * 0.01,
                     top: screenHeight * 0.02,
                   ),
-                  child: const SingleChildScrollView(
-                    child: TableWidget(),
+                  child: SingleChildScrollView(
+                    child: TableWidget(
+                      onTableUpdated: (bool status) {
+                        if (status) {
+                          print("Table updated, refreshing GPA...");
+                          _fetchGPA(); // Trigger a UI update
+                        }
+                      },
+                    ),
                   ),
                 ),
               ),
