@@ -10,11 +10,6 @@ class GPAService {
     int total = 0;
     SubjectController subjectController = SubjectController();
     List<String> creditList = await subjectController.getAllCredits();
-
-    print("^^^^^^^^^^^^creditList");
-    print(creditList);
-    print("^^^^^^^^^^^^creditList");
-
     // Convert each credit from String to int and add to total
     for (String credit in creditList) {
       total += int.tryParse(credit) ?? 0;
@@ -31,23 +26,13 @@ class GPAService {
     double totalGradePoint = 0.0;
     SubjectController subjectController = SubjectController();
     SettingController settingController = SettingController();
-
     List<Map<String, dynamic>> subjects = await subjectController.getAllSubjects();
-    print("!!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-    print(subjects);
-    print("!!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-
-
     for (var subject in subjects) {
       double? gpaValue = await settingController.getGpaValueByGrade(subject['grade'].toString());
-      print("!!!********************");
-      print(gpaValue);
-      print("!!!********************");
       if (gpaValue != null) {
         totalGradePoint += int.parse(subject['credit'])* gpaValue.toDouble();
       }
     }
-
     return totalGradePoint;
   }
 
@@ -58,9 +43,6 @@ class GPAService {
   Future<String> getFinalGPA() async {
     double totalGradePoint = await getTotalGradePoint();
     int totalCredits = await getTotalCredits();
-    print("#############################3");
-    print(totalGradePoint);
-    print("#############################3");
     return (totalGradePoint/totalCredits).toStringAsFixed(2);
   }
 }

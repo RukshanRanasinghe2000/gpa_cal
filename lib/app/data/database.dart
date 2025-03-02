@@ -6,16 +6,23 @@ import 'controllers/subject_controller.dart';
 
 class DatabaseConnection {
 
+  /// Checks if the database exists at the given [path].
   Future<bool> databaseExists(String path) =>
       databaseFactory.databaseExists(path);
 
+  /// Initializes and returns the database connection.
+  ///
+  /// - On **desktop platforms** (Windows, macOS, Linux), it initializes `sqflite_common_ffi` for database operations.
+  /// - If the database does **not exist**, it creates a new database and calls [_createDatabase] to set up the tables.
+  /// - If the database **already exists**, it simply opens the existing database.
+  ///
+  /// Returns a [Future] that completes with the initialized [Database] instance.
   Future<Database> initDatabase() async {
     try {
       // Initialize databaseFactory for desktop platforms
       if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
         databaseFactory = databaseFactoryFfi;
       }
-
       final databasePath = await getDatabasesPath();
       final databaseName = 'gpa_app_db.db';
       final dbPath = join(databasePath, databaseName);
@@ -38,6 +45,12 @@ class DatabaseConnection {
     }
   }
 
+  /// Creates the necessary tables in the database.
+  ///
+  /// This function is called automatically when a new database is created.
+  ///
+  /// - **subject** table stores information about subjects.
+  /// - **settings** table stores GPA-related settings.
   Future<void> _createDatabase(Database db, int version) async {
     await db.execute('''
       CREATE TABLE subject (
@@ -49,7 +62,6 @@ class DatabaseConnection {
         grade TEXT NOT NULL
       )
     ''');
-
     await db.execute('''
       CREATE TABLE settings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

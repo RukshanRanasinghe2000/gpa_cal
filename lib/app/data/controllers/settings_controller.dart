@@ -3,7 +3,21 @@ import 'package:sqflite/sqflite.dart';
 import '../database.dart';
 
 class SettingController {
-  // Create a new setting
+
+  /// Inserts a new setting into the `settings` table.
+  ///
+  /// This function adds a new grade and its corresponding GPA value to the database.
+  /// If a setting with the same grade already exists, it will be replaced.
+  ///
+  /// - **Parameters:**
+  ///   - `grade`: The grade (e.g., "A", "B", etc.).
+  ///   - `gpaValue`: The GPA value corresponding to the grade.
+  ///
+  /// - **Returns:** A `Future<int>` that resolves to the ID of the inserted row.
+  ///
+  /// - **Database Table:** `settings`
+  ///
+  /// - **Conflict Handling:** If a duplicate entry exists, it will be replaced.
   Future<int> addSetting(String grade, double gpaValue) async {
     late Database _db;
     final DatabaseConnection _databaseConnection = DatabaseConnection();
@@ -40,9 +54,6 @@ class SettingController {
       where: 'grade = ?',
       whereArgs: [grade],
     );
-    print("1111111111111111111111111111111");
-    print(result);
-    print("1111111111111111111111111111111");
     // Return GPA value if found, otherwise return null
     return result.isNotEmpty ? result.first['gpa_value'] as double : null;
   }

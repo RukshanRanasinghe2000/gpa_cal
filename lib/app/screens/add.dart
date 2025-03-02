@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
 import '../data/controllers/subject_controller.dart';
+import '../data/validators/form_validation.dart';
 
 class AddInfo extends StatefulWidget {
   const AddInfo({super.key});
@@ -109,78 +110,65 @@ class _AddInfoState extends State<AddInfo> {
           ),
           child: Form(
             key: _formKey,
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: screenWidth * 0.10,
-                    right: screenWidth * 0.10,
-                    top: screenHeight * 0.07,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "Add Grades",
-                      style: TextStyle(
-                        fontFamily: primaryFont,
-                        fontSize: screenWidth * 0.1,
-                        fontWeight: FontWeight.w600,
-                        color: textSecondaryColor,
-                      ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: screenWidth * 0.10,
+                      right: screenWidth * 0.10,
+                      top: screenHeight * 0.07,
                     ),
-                  ),
-                ),
-                _buildTextField("Semester", _semesterController),
-                _buildTextField("Module Code", _moduleCodeController),
-                _buildTextField("Name", _nameController),
-                _buildTextField(
-                  "Grade",
-                  _gradeController,
-                  validator: (value) {
-                    if (value!.isEmpty) return "Grade is required";
-                    if (!RegExp(r"^(A\+|A-|A|B\+|B-|B|C\+|C-|C|D\+|D-|D|E)$", caseSensitive: false).hasMatch(value)) {
-                      return "Enter a valid grade (A+, A, A-, B+, B, ...)";
-                    }
-                    return null;
-                  },
-                ),
-                _buildTextField(
-                  "Credit",
-                  _creditController,
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value!.isEmpty) return "Credit is required";
-                    if (!RegExp(r"^\d+(\.\d+)?$").hasMatch(value)) {
-                      return "Enter a valid number";
-                    }
-                    return null;
-                  },
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: screenWidth * 0.10,
-                    right: screenWidth * 0.10,
-                    top: screenHeight * 0.07,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      onPressed: save,
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(textSecondaryColor),
-                      ),
+                    child: Align(
+                      alignment: Alignment.centerRight,
                       child: Text(
-                        "Save",
+                        "Add Grades",
                         style: TextStyle(
-                          color: textTableHeader,
-                          fontSize: screenWidth * 0.05,
+                          fontFamily: primaryFont,
+                          fontSize: screenWidth * 0.1,
+                          fontWeight: FontWeight.w600,
+                          color: textSecondaryColor,
                         ),
                       ),
                     ),
                   ),
-                )
-              ],
-            ),
+                  _buildTextField("Semester", _semesterController,
+                      validator: (value) => FormValidator.validateRequired(value, "Semester")),
+                  _buildTextField("Module Code", _moduleCodeController,
+                      validator: (value) => FormValidator.validateRequired(value, "Module Code")),
+                  _buildTextField("Name", _nameController,
+                      validator: (value) => FormValidator.validateRequired(value, "Name")),
+                  _buildTextField("Grade", _gradeController,
+                      validator: FormValidator.validateGrade),
+                  _buildTextField("Credit", _creditController,
+                      keyboardType: TextInputType.number,
+                      validator: FormValidator.validateCredit),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: screenWidth * 0.10,
+                      right: screenWidth * 0.10,
+                      top: screenHeight * 0.07,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        onPressed: save,
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(textSecondaryColor),
+                        ),
+                        child: Text(
+                          "Save",
+                          style: TextStyle(
+                            color: textTableHeader,
+                            fontSize: screenWidth * 0.05,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
           ),
         ),
       ),
