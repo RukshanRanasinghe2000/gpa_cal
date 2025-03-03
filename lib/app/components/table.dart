@@ -88,7 +88,6 @@ class _TableWidgetState extends State<TableWidget> {
                 int gradeValue;
                 try {
                   gradeValue = int.parse(row[5]);
-                  print( row);
                 } catch (e) {
                   gradeValue = -1; // Handle non-numeric grades properly
                 }

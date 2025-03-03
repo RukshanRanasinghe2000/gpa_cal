@@ -5,7 +5,8 @@ import '../data/controllers/settings_controller.dart';
 import '../data/controllers/subject_controller.dart';
 
 class SettingsTable extends StatefulWidget {
-  const SettingsTable({super.key});
+  final Function(bool)? onTableUpdated;
+  const SettingsTable({super.key, this.onTableUpdated});
 
   @override
   _SettingsTableState createState() => _SettingsTableState();
@@ -37,8 +38,8 @@ class _SettingsTableState extends State<SettingsTable> {
         ];
       }).toList();
     });
-
-    print(rows);
+    // Notify parent that the table is updated
+    widget.onTableUpdated?.call(true);
   }
 
   @override
@@ -68,14 +69,23 @@ class _SettingsTableState extends State<SettingsTable> {
                   // Header row
                   _buildTableRow(["Grade", "GPA value", "Actions"],
                       isHeader: true, fontSize: fontSize, cellHeight: cellHeight),
-
                   // Data rows with Edit buttons
                   for (var row in rows)
                     _buildTableRow(
                       row.sublist(0, 3),
                       fontSize: fontSize,
                       cellHeight: cellHeight,
-                      editButton: () => _editRow(context, row[0], row[1]),
+                      editButton: () {
+                        int dataId;
+                        try {
+                          dataId = int.parse(row[2]);
+                          print(row);
+                        } catch (e) {
+                          dataId = -1; // Handle non-numeric grades properly
+                        }
+                        
+                        _editRow(context, row[0], row[1],dataId);
+                      },
                     ),
                 ],
               ),
@@ -141,7 +151,13 @@ class _SettingsTableState extends State<SettingsTable> {
     );
   }
 
-  void _editRow(BuildContext context, String grade, String gpa) {
+  void _editRow(BuildContext context, String grade, String gpa, int id) {
+
+    TextEditingController gradeController = TextEditingController(text: grade);
+    TextEditingController gpaController = TextEditingController(text: gpa);
+
+    final _formKey = GlobalKey<FormState>();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -152,33 +168,38 @@ class _SettingsTableState extends State<SettingsTable> {
               fontFamily: primaryFont,
             )
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              style: const TextStyle(
-                color: textParagraph,
-                fontFamily: primaryFont,
-              ),
-              initialValue: grade,
-              decoration: const InputDecoration(
-                  labelText: 'Grade',
-                  labelStyle: TextStyle(color: textParagraph)
-              ),
-            ),
-            TextFormField(
-              style: const TextStyle(
-                color: textParagraph,
-                fontFamily: primaryFont,
-              ),
-              initialValue: gpa,
-              decoration: const InputDecoration(
-                  labelText: 'GPA Value',
-                  labelStyle: TextStyle(color: textParagraph)),
-              keyboardType: TextInputType.number,
-            ),
-          ],
-        ),
+        content: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: gradeController,
+                  style: const TextStyle(
+                    color: textParagraph,
+                    fontFamily: primaryFont,
+                  ),
+                  // initialValue: grade,
+                  decoration: const InputDecoration(
+                      labelText: 'Grade',
+                      labelStyle: TextStyle(color: textParagraph)
+                  ),
+                ),
+                TextFormField(
+                  controller: gpaController,
+                  style: const TextStyle(
+                    color: textParagraph,
+                    fontFamily: primaryFont,
+                  ),
+                  // initialValue: gpa,
+                  decoration: const InputDecoration(
+                      labelText: 'GPA Value',
+                      labelStyle: TextStyle(color: textParagraph)),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),)
+        ,
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -186,15 +207,47 @@ class _SettingsTableState extends State<SettingsTable> {
               backgroundColor:
               WidgetStateProperty.all<Color>(textSecondaryColor),
             ),
-            child: const Text('Cancel'),
+            child: const Text(
+                'Cancel',
+              style: TextStyle(
+                color: textTableHeader,
+              ),
+            ),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                String updatedGrade = gradeController.text;
+                String updatedGpa = gpaController.text;
+
+                // Check if any value has changed
+                if (updatedGrade == grade && updatedGpa == gpa ) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: textSecondaryColor,
+                      content: Text("Nothing to update"),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
+
+                SettingController subjectController = SettingController();
+                await subjectController.updateSetting(id, updatedGrade, double.parse(updatedGpa));
+                loadAll();
+                Navigator.of(context).pop();
+              }
+            },
             style: ButtonStyle(
               backgroundColor:
               WidgetStateProperty.all<Color>(textSecondaryColor),
             ),
-            child: const Text('Save'),
+            child: const Text(
+                'Save',
+              style: TextStyle(
+                color: textTableHeader,
+              ),
+            ),
           ),
         ],
       ),
