@@ -185,6 +185,7 @@ class _AddInfoState extends State<AddInfo> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: TextFormField(
         controller: controller,
+        autofocus: true,
         keyboardType: keyboardType,
         validator: validator ??
                 (value) {

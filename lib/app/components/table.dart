@@ -177,6 +177,7 @@ class _TableWidgetState extends State<TableWidget> {
             children: [
               TextFormField(
                 controller: semController,
+                autofocus: true,
                 style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
                 decoration: const InputDecoration(
                   labelText: 'Semester',
@@ -186,6 +187,7 @@ class _TableWidgetState extends State<TableWidget> {
               ),
               TextFormField(
                 controller: codeController,
+                autofocus: true,
                 style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
                 decoration: const InputDecoration(
                   labelText: 'Code',
@@ -195,6 +197,7 @@ class _TableWidgetState extends State<TableWidget> {
               ),
               TextFormField(
                 controller: moduleController,
+                autofocus: true,
                 style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
                 decoration: const InputDecoration(
                   labelText: 'Module name',
@@ -204,6 +207,7 @@ class _TableWidgetState extends State<TableWidget> {
               ),
               TextFormField(
                 controller: creditController,
+                autofocus: true,
                 style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
                 decoration: const InputDecoration(
                   labelText: 'Credit',
@@ -213,6 +217,7 @@ class _TableWidgetState extends State<TableWidget> {
               ),
               TextFormField(
                 controller: gradeController,
+                autofocus: true,
                 style: const TextStyle(color: textParagraph, fontFamily: primaryFont),
                 decoration: const InputDecoration(
                   labelText: 'Grade',

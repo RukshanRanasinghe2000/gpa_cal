@@ -188,6 +188,7 @@ class _SettingsTableState extends State<SettingsTable> {
                 ),
                 TextFormField(
                   controller: gpaController,
+                  autofocus: true,
                   style: const TextStyle(
                     color: textParagraph,
                     fontFamily: primaryFont,
