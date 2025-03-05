@@ -174,6 +174,7 @@ class _SettingsTableState extends State<SettingsTable> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
+                  readOnly: true,
                   controller: gradeController,
                   style: const TextStyle(
                     color: textParagraph,
