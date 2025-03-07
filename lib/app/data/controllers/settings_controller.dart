@@ -97,6 +97,29 @@ class SettingController {
     return settings;
   }
 
+  /// Get all Grades
+  Future<List> getAllGrades() async {
+    final DatabaseConnection _databaseConnection = DatabaseConnection();
+    final Database _db = await _databaseConnection.initDatabase();
+
+    // Check if the settings table is empty
+    List<Map<String, dynamic>> settings = await _db.query(
+      'settings',
+      columns: ['grade']
+    );
+
+    if (settings.isEmpty) {
+      // Insert default settings only if the table is empty
+      SettingController subjectController = SettingController();
+      await subjectController.insertDefaultSettings();
+
+      // Re-fetch the settings after inserting default values
+      settings = await _db.query('settings');
+
+    }
+    return settings;
+  }
+
   // Check if there are no settings and insert default values
   Future<void> insertDefaultSettings() async {
     late Database _db;
