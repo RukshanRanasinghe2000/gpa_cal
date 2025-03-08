@@ -229,111 +229,114 @@ class _TableWidgetState extends State<TableWidget> {
           ),
         ),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                bool? confirmDelete = await showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      backgroundColor: darkBackground,
-                      title: Text(
-                          "Confirm Delete",
+          Row(
+            children: [
+                    ElevatedButton(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          bool? confirmDelete = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                backgroundColor: darkBackground,
+                                title: Text(
+                                  "Confirm Delete",
+                                  style: TextStyle(
+                                    color: textSecondaryColor,
+                                    fontFamily: primaryFont,
+                                  ),
+                                ),
+                                content: Text(
+                                  "Are you sure you want to delete this?",
+                                  style: TextStyle(
+                                      color: textParagraph
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(false),
+                                    child: Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(true),
+                                    child: Text("Delete"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          if (confirmDelete == true) {
+                            /// Delete selected subject
+                            subjectController.deleteSubject(id);
+                            loadAll();
+                          }
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all<Color>(textSecondaryColor),
+                        ),
+                        child: Text(
+                          "Delete",
                           style: TextStyle(
-                            color: textSecondaryColor,
-                            fontFamily: primaryFont,
+                            color: textTableHeader,
                           ),
-                      ),
-                      content: Text(
-                          "Are you sure you want to delete this?",
-                        style: TextStyle(
-                          color: textParagraph
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: Text("Cancel"),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(true),
-                          child: Text("Delete"),
-                        ),
-                      ],
-                    );
-                  },
-                );
-
-                if (confirmDelete == true) {
-                  /// Delete selected subject
-                  subjectController.deleteSubject(id);
-                  loadAll();
-                }
-              },
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all<Color>(textSecondaryColor),
-              ),
-              child: Text(
-                  "Delete",
-                style: TextStyle(
-                  color: textTableHeader,
-                ),
-              )
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all<Color>(textSecondaryColor),
-            ),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(
-                color: textTableHeader,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                String updatedSem = semController.text;
-                String updatedCode = codeController.text;
-                String updatedModule = moduleController.text;
-                String updatedGrade = gradeController.text;
-                String updatedCredit = creditController.text;
-
-                // Check if any value has changed
-                if (updatedSem == sem &&
-                    updatedCode == code &&
-                    updatedModule == module &&
-                    updatedGrade == grade &&
-                    updatedCredit == credit) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      backgroundColor: textSecondaryColor,
-                      content: Text("Nothing to update"),
-                      duration: Duration(seconds: 2),
+                        )
                     ),
-                  );
-                  return;
-                }
-                await subjectController.updateSubject(id, updatedCode, updatedModule, updatedSem, updatedGrade, updatedCredit);
-                loadAll();
-                Navigator.of(context).pop();
-              }
-            },
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all<Color>(textSecondaryColor),
-            ),
-            child: const Text(
-              'Save',
-              style: TextStyle(
-                color: textTableHeader,
-              ),
-            ),
-          ),
+                    Spacer(),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all<Color>(textSecondaryColor),
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: textTableHeader,
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          String updatedSem = semController.text;
+                          String updatedCode = codeController.text;
+                          String updatedModule = moduleController.text;
+                          String updatedGrade = gradeController.text;
+                          String updatedCredit = creditController.text;
+
+                          // Check if any value has changed
+                          if (updatedSem == sem &&
+                              updatedCode == code &&
+                              updatedModule == module &&
+                              updatedGrade == grade &&
+                              updatedCredit == credit) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                backgroundColor: textSecondaryColor,
+                                content: Text("Nothing to update"),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                            return;
+                          }
+                          await subjectController.updateSubject(id, updatedCode, updatedModule, updatedSem, updatedGrade, updatedCredit);
+                          loadAll();
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all<Color>(textSecondaryColor),
+                      ),
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(
+                          color: textTableHeader,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
         ],
       ),
     );
