@@ -107,7 +107,6 @@ class SettingController {
       'settings',
       columns: ['grade']
     );
-
     if (settings.isEmpty) {
       // Insert default settings only if the table is empty
       SettingController subjectController = SettingController();
@@ -115,7 +114,6 @@ class SettingController {
 
       // Re-fetch the settings after inserting default values
       settings = await _db.query('settings');
-
     }
     return settings;
   }
@@ -128,7 +126,6 @@ class SettingController {
 
     // Check if settings table is empty
     List<Map<String, dynamic>> settings = await _db.query('settings');
-
     if (settings.isEmpty) {
       // Default data
       List<List<dynamic>> rows = [

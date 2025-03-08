@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gpa_cal/constant.dart';
+import '../data/controllers/settings_controller.dart';
 import '../data/controllers/subject_controller.dart';
 import '../data/validators/form_validation.dart';
 
@@ -18,6 +19,23 @@ class _AddInfoState extends State<AddInfo> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _gradeController = TextEditingController();
   final TextEditingController _creditController = TextEditingController();
+  SettingController settingController = SettingController();
+
+  List<String> allGrades = [];
+  String? selectedGrade;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGrades();
+  }
+
+  Future<void> _loadGrades() async {
+    List grades = await settingController.getAllGrades();
+    setState(() {
+      allGrades = grades.map((row) => row['grade'] as String).toList();
+    });
+  }
 
   void clearForm() {
     _semesterController.clear();
@@ -25,10 +43,21 @@ class _AddInfoState extends State<AddInfo> {
     _nameController.clear();
     _gradeController.clear();
     _creditController.clear();
+    setState(() {
+      selectedGrade = null;
+    });
   }
 
   Future<void> save() async {
     if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    // Check if the dropdown value is selected
+    if (selectedGrade == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Grade is required')),
+      );
       return;
     }
 
@@ -85,7 +114,7 @@ class _AddInfoState extends State<AddInfo> {
       String semester = _semesterController.text.trim();
       String moduleCode = _moduleCodeController.text.trim();
       String name = _nameController.text.trim();
-      String grade = _gradeController.text.trim().toUpperCase();
+      String grade = selectedGrade!;
       String credit = _creditController.text.trim();
 
       SubjectController().addSubject(moduleCode, name, semester, grade, credit);
@@ -138,11 +167,42 @@ class _AddInfoState extends State<AddInfo> {
                       validator: (value) => FormValidator.validateRequired(value, "Module Code")),
                   _buildTextField("Name", _nameController,
                       validator: (value) => FormValidator.validateRequired(value, "Name")),
-                  _buildTextField("Grade", _gradeController,
-                      validator: FormValidator.validateGrade),
                   _buildTextField("Credit", _creditController,
                       keyboardType: TextInputType.number,
                       validator: FormValidator.validateCredit),
+                  if (allGrades.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: DropdownButton<String>(
+                          value: selectedGrade,
+                          items: allGrades.map((String grade) {
+                            return DropdownMenuItem<String>(
+                              value: grade,
+                              child: Text(grade),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedGrade = newValue;
+                            });
+                          },
+                          hint: const Text(
+                            "Select a Grade",
+                            style: TextStyle(
+                              color: textParagraph,
+                              fontFamily: primaryFont,
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: textParagraph,
+                            fontFamily: primaryFont,
+                          ),
+                          dropdownColor: darkBackground,
+                        ),
+                      ),
+                    ),
                   Padding(
                     padding: EdgeInsets.only(
                       left: screenWidth * 0.10,
